@@ -1,0 +1,24 @@
+# Fedora 44 ships obs-studio 32.0.4 and qt6 6.11.1.
+#
+# The OBS major version matters: OBS refuses to load a module whose libobs API version does not
+# match its own, so building against 31 headers produces a plugin that current OBS rejects outright.
+FROM registry.fedoraproject.org/fedora:44
+
+RUN dnf -y install \
+        obs-studio-devel \
+        qt6-qtbase-devel \
+        qt6-qtbase-private-devel \
+        cmake \
+        ninja-build \
+        gcc-c++ \
+        pkgconf-pkg-config \
+        make \
+    # For the headless load test: a real OBS to load the module into, a virtual X server to
+    # give it a display, and llvmpipe so OpenGL works with no GPU.
+        obs-studio \
+        xorg-x11-server-Xvfb \
+        mesa-dri-drivers \
+        mesa-libGL \
+    && dnf clean all
+
+WORKDIR /src
